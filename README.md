@@ -17,7 +17,7 @@
 
 1. Клонировать репозиторий и перейти в него в командной строке:
 ```
-git clone git@github.com:svtplv/foodgram-project-react.git
+git clone git@github.com:Bobby228/foodgram-project-react.git
 ```
 
 2. Запустить Docker Compose с конфигурацией docker-compose.production.yml:
@@ -43,14 +43,14 @@ docker compose -f docker-compose.production.yml exec backend python manage.py im
 ### Документация:
 
 ```
-http://localhost:9000/api/docs/
+http://localhost:8888/api/docs/
 
 ```
 
 ### Примеры запросов:
 ***Получить рецепт:***
 ```
-GET http://localhost:9000/api/recipes/1/
+GET http://localhost:8888/api/recipes/1/
 ```
 Ответ:
 ```
@@ -90,7 +90,7 @@ GET http://localhost:9000/api/recipes/1/
 ```
 ***Добавить рецепт в избранное:***
 ```
-POST http://localhost:9000/api/recipes/{id}/favorite/
+POST http://localhost:8888/api/recipes/{id}/favorite/
 ```
 
 Ответ:
@@ -105,5 +105,5 @@ POST http://localhost:9000/api/recipes/{id}/favorite/
 
 
 
-### Авторы:
-[Святослав Поляков](https://github.com/svtplv)
+### Автор:
+[Максим Бобров](https://github.com/Bobby228)
