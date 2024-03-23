@@ -1,73 +1,66 @@
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from foodgram import constants
 
+class CustomUser(AbstractUser):
+    "Кастомная модель пользователя."
 
-class User(AbstractUser):
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ('username', 'first_name', 'last_name', 'password')
+    id = models.AutoField(primary_key=True)
     email = models.EmailField(
-        'Почта',
+        'Электронная почта',
+        blank=False,
+        null=False,
         unique=True,
+        max_length=254
     )
-    username = models.CharField(
-        'Имя пользователя',
-        max_length=constants.MAX_USERS_NAME,
-        unique=True,
-        validators=(UnicodeUsernameValidator(),)
-    )
-    first_name = models.CharField(
-        'Имя',
-        max_length=constants.MAX_USERS_NAME,
-    )
-    last_name = models.CharField(
-        'Фамилия',
-        max_length=constants.MAX_USERS_NAME,
-    )
-    password = models.CharField(
-        'Пароль',
-        max_length=constants.MAX_PASSWORD,
-    )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'password']
 
     class Meta:
+        # ordering = ???
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('username',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['username', 'email'],
+                name='unique_username_email',
+            )
+        ]
 
     def __str__(self):
         return self.username
 
 
 class Follow(models.Model):
+    """Модель подписки"""
+
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        User,
-        verbose_name='Пользователь',
+        CustomUser,
         on_delete=models.CASCADE,
-        related_name="follower"
+        related_name='follower',
+        verbose_name='Подписчик'
     )
     author = models.ForeignKey(
-        User,
-        verbose_name='Автор',
+        CustomUser,
         on_delete=models.CASCADE,
-        related_name="followers"
+        related_name='author',
+        verbose_name='Автор'
     )
 
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = [
-            models.CheckConstraint(
-                name='prevent_self_follow',
-                check=~models.Q(user=models.F('author')),
-                violation_error_message='Нельзя подписаться на самого себя'
-            ),
             models.UniqueConstraint(
-                fields=('user', 'author'),
-                name="unique_followers",
-            )
+                fields=['user', 'author'],
+                name='unique_follow'),
+            models.CheckConstraint(
+                name='user_is_not_author',
+                check=~models.Q(user=models.F('author'))
+            ),
         ]
 
     def __str__(self):
-        return f'{self.user} подписан на {self.author}'
+        return f"{self.user.username} подписан на {self.author.username}"

@@ -1,109 +1,95 @@
-# Foodgram
-## Описание:
+# "Продуктовый помощник" Foodgram 
 
-«Фудграм» — сайт, на котором пользователи могут публиковать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Пользователям сайта также доступен сервис «Список покупок». Он позволит создавать список продуктов, которые нужно купить для приготовления выбранных блюд.
+## Описание проекта
+«Продуктовый помощник», на котором пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», скачивать список продуктов, необходимых для приготовления выбранных блюд.
+Ссылка на сайт: https://my-foodgram.sytes.net
 
-### Стек технологий:
-* Python 3.10
-* Django 4.2
-* Django REST framework 3.14
-* Docker 
-* Docker Compose
-* nginx
-* PostgreSQL
-* GitHub Actions
+## Технологии
+•	Python 3.9
+•	Django==3.2.3
+•	djangorestframework==3.12.4
+•	nginx
+•	gunicorn==20.1.0
 
-### Установка:
+## Автор
+[@Bobby228](https://github.com/Bobby228)
 
-1. Клонировать репозиторий и перейти в него в командной строке:
+### Как запустить проект:
+
+Клонировать репозиторий и перейти в него в командной строке:
+
 ```
-git clone git@github.com:Bobby228/foodgram-project-react.git
-```
-
-2. Запустить Docker Compose с конфигурацией docker-compose.production.yml:
-```
-docker compose -f docker-compose.production.yml up -d
+git clone https://github.com/Bobby228/foodgram-project-react.git
 ```
 
-3. Собрать статику:
 ```
-docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic --no-input
+cd foodgram-project-react
 ```
 
-4. Выполнить миграции:
+Cоздать и активировать виртуальное окружение:
+
+```
+python3 -m venv env
+```
+
+* Если у вас Linux/macOS
+
+    ```
+    source env/bin/activate
+    ```
+
+* Если у вас windows
+
+    ```
+    source env/scripts/activate
+    ```
+
+```
+python3 -m pip install --upgrade pip
+```
+
+Установить зависимости из файла requirements.txt:
+
+```
+pip install -r requirements.txt
+```
+
+Перейти в каталог infra
+```
+cd foodgram-project-react/infra
+```
+
+Создать файл .evn для хранения ключей:
+
+```
+SECRET_KEY='указать секретный ключ'
+ALLOWED_HOSTS='указать имя или IP хоста'
+POSTGRES_DB=foodgram
+POSTGRES_USER=foodgram_user
+POSTGRES_PASSWORD=foodgram_password
+DB_NAME=foodgram
+DB_HOST=db
+DB_PORT=5432
+DEBUG=False
+```
+
+Запустить docker-compose.production:
+
+```
+docker compose -f docker-compose.production.yml up
+```
+
+Выполнить миграции, сбор статики и загрузку ингредиентов:
+
 ```
 docker compose -f docker-compose.production.yml exec backend python manage.py migrate
+docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic --no-input
+docker compose -f docker-compose.production.yml exec backend python manage.py load_data
 ```
 
-5. Наполненить БД подготовленными данными:
-```
-docker compose -f docker-compose.production.yml exec backend python manage.py import_data
-```
-
-### Документация:
+Создать суперпользователя, ввести почту, логин, пароль:
 
 ```
-http://localhost:8888/api/docs/
-
+docker compose -f docker-compose.production.yml exec backend python manage.py createsuperuser
 ```
 
-### Примеры запросов:
-***Получить рецепт:***
-```
-GET http://localhost:8888/api/recipes/1/
-```
-Ответ:
-```
-{
-    "id": 1,
-    "tags": [
-        {
-            "id": 2,
-            "name": "Обед",
-            "color": "#19f081",
-            "slug": "lunch"
-        }
-    ],
-    "author": {
-        "email": "second_user@email.org",
-        "id": 3,
-        "username": "second-user",
-        "first_name": "Андрей",
-        "last_name": "Макаревский",
-        "is_subscribed": false
-    },
-    "ingredients": [
-        {
-            "id": 1,
-            "name": "абрикосовое варенье",
-            "measurement_unit": "г",
-            "amount": 25
-        }
-    ],
-    "is_favorited": false,
-    "is_in_shopping_cart": false,
-    "name": "Нечто съедобное (пробовать на свой страх и риск)",
-    "image": "http://foodgram-svt.duckdns.org/media/recipe/images/l-intro-1660422159.jpg",
-    "text": "Приготовьте как нибудь эти ингредиеты, не забудьте посолить.",
-    "cooking_time": 12
-}
-```
-***Добавить рецепт в избранное:***
-```
-POST http://localhost:8888/api/recipes/{id}/favorite/
-```
-
-Ответ:
-```
-{
-  "id": 0,
-  "name": "string",
-  "image": "http://foodgram.example.org/media/recipes/images/image.jpeg",
-  "cooking_time": 1
-}
-```
-
-
-
-### Авторы:
-[Максим Бобров](https://github.com/Bobby228)

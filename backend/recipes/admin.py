@@ -1,64 +1,85 @@
 from django.contrib import admin
 
-from .models import Cart, Favorite, Ingredient, Quantity, Recipe, Tag
-
-
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'color', 'slug',)
-    search_fields = ('name', 'color')
-    search_help_text = 'Поиск по названию тега или его слагу.'
+from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                     ShoppingCart, Tag)
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'measurement_unit',)
-    list_filter = ('measurement_unit',)
+    """ Администрирование ингредиентов. """
+
+    list_display = ('name', 'measurement_unit')
+    list_filter = ('name',)
     search_fields = ('name',)
-    search_help_text = 'Поиск по названию ингредиента.'
 
 
-class QuantityInline(admin.TabularInline):
-    autocomplete_fields = ('ingredient',)
-    model = Quantity
-    extra = 4
-    min_num = 1
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    """ Администрирование тегов. """
+
+    list_display = ('name', 'color', 'slug')
+    search_fields = ('name', 'color')
+    list_filter = ('name', 'color')
+
+
+class RecipeIngredientInline(admin.TabularInline):
+    """ Администрирование ингредиентов в рецептах. """
+
+    model = RecipeIngredient
+
+
+class TagInline(admin.TabularInline):
+    """Администрирование тегов к рецептам. """
+
+    model = Recipe.tags.through
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    autocomplete_fields = ('author',)
-    inlines = (QuantityInline,)
-    list_display = ('name', 'author')
-    search_fields = ('name', 'author')
-    search_help_text = 'Поиск по названию или автору рецепта.'
-    list_filter = ('tags',)
+    """ Администрирование рецептов. """
 
-    def change_view(self, request, object_id, extra_context=None):
-        self.readonly_fields = ['favorites_count']
-        return super().change_view(request, object_id)
+    inlines = (RecipeIngredientInline, TagInline)
+    list_display = (
+        'name',
+        'text',
+        'author',
+        'pub_date',
+        'cooking_time',
+        'display_ingredients',
+        'favorite_count',
+        'display_tags'
+    )
+    search_fields = ('name', 'author__username', 'favorite_count')
+    list_filter = ('name', 'author', 'tags')
 
-    def add_view(self, request, extra_context=None):
-        self.readonly_fields = []
-        return super().add_view(request)
+    @admin.display(description='Количество добавлений в избранное')
+    def favorite_count(self, obj):
+        return obj.favorite.count()
 
-    def favorites_count(self, obj):
-        return obj.favorites.count()
+    @admin.display(description='Отображение ингредиентов')
+    def display_ingredients(self, recipe):
+        return recipe.ingredients.values_list(
+            'name', flat=True
+        ).order_by('name')
 
-    favorites_count.short_description = 'Количество добавлений в избранное'
+    @admin.display(description='Теги')
+    def display_tags(self, recipe):
+        return recipe.tags.values_list(
+            'name', flat=True
+        ).order_by('name')
+
+
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+    """
+    Администрирование списков покупок.
+    """
+
+    list_display = ('user', 'recipe')
+    list_filter = ('user', 'recipe')
+    search_fields = ('user',)
 
 
 @admin.register(Favorite)
-class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('recipe', 'user')
-    autocomplete_fields = ('recipe', 'user')
-    search_fields = ('user__username',)
-    search_help_text = 'Поиск по пользователю.'
-
-
-@admin.register(Cart)
-class CartAdmin(admin.ModelAdmin):
-    list_display = ('recipe', 'user')
-    autocomplete_fields = ('recipe', 'user')
-    search_fields = ('user__username',)
-    search_help_text = 'Поиск по пользователю.'
+class FavoriteAdmin(ShoppingCartAdmin):
+    """ Администрирование избранного. """

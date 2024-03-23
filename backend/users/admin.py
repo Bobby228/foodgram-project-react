@@ -1,42 +1,31 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.admin import UserAdmin
 
-from .models import Follow, User
+from users.models import CustomUser, Follow
 
 
-@admin.register(User)
-class UserAdmin(BaseUserAdmin):
-    add_fieldsets = (
-        (
-            None,
-            {
-                'classes': ('wide',),
-                'fields': (
-                    'email',
-                    'username',
-                    'first_name',
-                    'last_name',
-                    'password1',
-                    'password2'
-                ),
-            },
-        ),
-    )
+@admin.register(CustomUser)
+class UserAdmin(UserAdmin):
+    """Администрирование пользователей."""
+
     list_display = (
         'username',
-        'email',
         'first_name',
         'last_name',
-        'is_active',
+        'email',
     )
-    list_editable = ('email', 'is_active')
-    search_fields = ('username', 'email')
-    search_help_text = 'Поиск по электронной почте или имени пользователя.'
+    list_filter = ('username', 'email',)
+    search_fields = ('username', 'email',)
+    ordering = ('username',)
 
 
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
-    list_display = ('user', 'author')
-    autocomplete_fields = ('user', 'author')
-    search_fields = ('user__username',)
-    search_help_text = 'Поиск по пользователю.'
+    """Администрирование подписок."""
+
+    list_display = (
+        'user',
+        'author',
+    )
+    list_filter = ('user', 'author',)
+    search_fields = ('user__username', 'author__username',)
