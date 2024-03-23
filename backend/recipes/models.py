@@ -43,6 +43,10 @@ class Tag(models.Model):
         max_length=200, null=True, verbose_name='Слаг', unique=True
     )
 
+    class Meta:
+        verbose_name = 'Тип блюда'
+        verbose_name_plural = 'Тип блюда'
+
 
 class RecipeQuerySet(models.QuerySet):
     """Вспомогательная модель отображения
