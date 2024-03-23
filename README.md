@@ -105,5 +105,5 @@ POST http://localhost:8888/api/recipes/{id}/favorite/
 
 
 
-### Автор:
+### Авторы:
 [Максим Бобров](https://github.com/Bobby228)
