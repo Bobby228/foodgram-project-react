@@ -195,7 +195,7 @@ class BaseItemFavoriteShopingCartViewSet(ModelViewSet):
         if not temp:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
-            self.model.objects.get(user=user, recipe=item).delete()
+            temp.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
