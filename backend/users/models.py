@@ -5,7 +5,6 @@ from django.db import models
 class CustomUser(AbstractUser):
     "Кастомная модель пользователя."
 
-    id = models.AutoField(primary_key=True)
     email = models.EmailField(
         'Электронная почта',
         blank=False,
@@ -18,7 +17,6 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'password']
 
     class Meta:
-        # ordering = ???
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         constraints = [
@@ -35,7 +33,6 @@ class CustomUser(AbstractUser):
 class Follow(models.Model):
     """Модель подписки"""
 
-    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,

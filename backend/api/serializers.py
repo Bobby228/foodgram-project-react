@@ -135,6 +135,21 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
+    class Meta:
+        model = Recipe
+        fields = (
+            'id',
+            'name',
+            'text',
+            'image',
+            'author',
+            'ingredients',
+            'cooking_time',
+            'tags',
+            'is_favorited',
+            'is_in_shopping_cart',
+        )
+
     def get_is_favorited(self, obj):
         """Получение избранных рецептов."""
         request = self.context.get('request')
@@ -150,21 +165,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             return False
         user = request.user
         return ShoppingCart.objects.filter(recipe=obj, user=user).exists()
-
-    class Meta:
-        model = Recipe
-        fields = (
-            'id',
-            'name',
-            'text',
-            'image',
-            'author',
-            'ingredients',
-            'cooking_time',
-            'tags',
-            'is_favorited',
-            'is_in_shopping_cart',
-        )
 
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):

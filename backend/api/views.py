@@ -5,7 +5,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import (AllowAny,
                                         IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
@@ -23,12 +22,7 @@ from api.serializers import (CustomUserGetSerializer, CustomUserSerializer,
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from users.models import CustomUser, Follow
-
-
-class CommonPagination(PageNumberPagination):
-    """Пагинация."""
-    page_size = 6
-    page_size_query_param = 'limit'
+from .paginations import CommonPagination
 
 
 class CustomUserViewSet(UserViewSet):
@@ -197,10 +191,12 @@ class BaseItemFavoriteShopingCartViewSet(ModelViewSet):
         item_id = kwargs['id']
         user = request.user
         item = get_object_or_404(Recipe, id=item_id)
-        if not self.model.objects.filter(user=user, recipe=item).exists():
+        temp = self.model.objects.filter(user=user, recipe=item).first()
+        if not temp:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        self.model.objects.get(user=user, recipe=item).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            self.model.objects.get(user=user, recipe=item).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FavoriteViewSet(BaseItemFavoriteShopingCartViewSet):
