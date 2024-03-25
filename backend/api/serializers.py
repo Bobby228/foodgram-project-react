@@ -157,7 +157,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'is_favorited',
             'is_in_shopping_cart',
         )
-    
+
     def get_is_favorited(self, obj):
         """Получение избранных рецептов."""
         return get_data_from_model(Favorite)
