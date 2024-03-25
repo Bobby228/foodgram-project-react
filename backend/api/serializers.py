@@ -160,7 +160,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         """Получение избранных рецептов."""
-        return get_data_from_model(obj=obj, model=Favorite)
+        return get_data_from_model(self=self, obj=obj, model=Favorite)
         # request = self.context.get('request')
         # if request is None or request.user.is_anonymous:
         #     return False
@@ -169,7 +169,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_is_in_shopping_cart(self, obj):
         """Получение списка покупок."""
-        return get_data_from_model(obj=obj, model=ShoppingCart)
+        return get_data_from_model(self=self, obj=obj, model=ShoppingCart)
         # request = self.context.get('request')
         # if request is None or request.user.is_anonymous:
         #     return False
