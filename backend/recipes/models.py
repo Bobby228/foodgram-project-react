@@ -27,7 +27,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f'{self.name[:15]} ({self.measurement_unit})'
+        return f'{self.name} ({self.measurement_unit})'
 
 
 class Tag(models.Model):
@@ -42,10 +42,6 @@ class Tag(models.Model):
     slug = models.SlugField(
         max_length=200, null=True, verbose_name='Слаг', unique=True
     )
-
-    class Meta:
-        verbose_name = 'Тип блюда'
-        verbose_name_plural = 'Тип блюда'
 
 
 class RecipeQuerySet(models.QuerySet):
@@ -115,7 +111,7 @@ class Recipe(models.Model):
         verbose_name_plural = 'Рецепты'
 
     def __str__(self):
-        return self.name[:15]
+        return self.name
 
 
 class TagsInRecipe(models.Model):

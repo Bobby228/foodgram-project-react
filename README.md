@@ -93,7 +93,3 @@ docker compose -f docker-compose.production.yml exec backend python manage.py lo
 docker compose -f docker-compose.production.yml exec backend python manage.py createsuperuser
 ```
 
-Данные для админки:
-
-Логин - admin
-Пароль - 12345
