@@ -167,7 +167,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return get_data_from_model(self=self, obj=obj, model=ShoppingCart)
 
 
-
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
     """Сериализатор создания/изменения/удаления своего рецепта. """
 
