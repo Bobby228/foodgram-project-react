@@ -13,6 +13,14 @@ from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
 from users.models import CustomUser, Follow
 
 
+def get_data_from_model(self, obj, model):
+    request = self.context.get('request')
+    if request is None or request.user.is_anonymous:
+        return False
+    user = request.user
+    return model.objects.filter(recipe=obj, user=user).exists()
+
+
 class CustomUserSerializer(UserCreateSerializer):
     """Сериализатор создания/редактирования/удаления пользователя. """
 
@@ -135,22 +143,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
-    def get_is_favorited(self, obj):
-        """Получение избранных рецептов."""
-        request = self.context.get('request')
-        if request is None or request.user.is_anonymous:
-            return False
-        user = request.user
-        return Favorite.objects.filter(recipe=obj, user=user).exists()
-
-    def get_is_in_shopping_cart(self, obj):
-        """Получение списка покупок."""
-        request = self.context.get('request')
-        if request is None or request.user.is_anonymous:
-            return False
-        user = request.user
-        return ShoppingCart.objects.filter(recipe=obj, user=user).exists()
-
     class Meta:
         model = Recipe
         fields = (
@@ -165,6 +157,15 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'is_favorited',
             'is_in_shopping_cart',
         )
+
+    def get_is_favorited(self, obj):
+        """Получение избранных рецептов."""
+        return get_data_from_model(self=self, obj=obj, model=Favorite)
+
+    def get_is_in_shopping_cart(self, obj):
+        """Получение списка покупок."""
+        return get_data_from_model(self=self, obj=obj, model=ShoppingCart)
+
 
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
