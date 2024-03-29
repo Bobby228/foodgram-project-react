@@ -193,12 +193,12 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """Метод валидации данных перед созданием рецепта."""
-        image = data.get('image')
-        if not image:
-            raise serializers.ValidationError(
-                {'Добавьте фото'}
-            )
-        data['image'] = image
+        # image = data.get('image')
+        # if not image:
+        #     raise serializers.ValidationError(
+        #         {'Добавьте фото'}
+        #     )
+        # data['image'] = image
         ingredients = data.get('ingredients')
         if not ingredients:
             raise serializers.ValidationError(
