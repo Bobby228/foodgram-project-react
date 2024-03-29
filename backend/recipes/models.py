@@ -76,7 +76,8 @@ class Recipe(models.Model):
         "Ссылка на изображение",
         upload_to="recipes/images/",
         null=True,
-        default=None
+        default=None,
+        blank=True
     )
     text = models.TextField(verbose_name='Текст')
     ingredients = models.ManyToManyField(

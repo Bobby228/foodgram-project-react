@@ -1,5 +1,4 @@
-from django.conf.urls import url
-from django.urls import include, path
+from django.urls import include, path, re_path
 from rest_framework import routers
 
 from api.views import (CustomUserViewSet, FavoriteViewSet, IngredientViewSet,
@@ -15,9 +14,9 @@ router_v1.register(r'subscriptions', CustomUserViewSet,
 
 
 urlpatterns = [
-    url(r'^auth/', include('djoser.urls')),
-    url(r'^auth/', include('djoser.urls.authtoken')),
-    url(r'', include(router_v1.urls)),
+    re_path(r'^auth/', include('djoser.urls')),
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
+    re_path(r'', include(router_v1.urls)),
     path(
         'recipes/<int:id>/favorite/',
         FavoriteViewSet.as_view({'post': 'create', 'delete': 'delete'}),
